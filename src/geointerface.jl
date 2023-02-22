@@ -131,18 +131,19 @@ let pointtypes = (wkbPoint, wkbPoint25D, wkbPointM, wkbPointZM),
     )
         return getgeom(geom, i - 1)
     end
+    # Return a tuple point rather than a GDAL point
     function GeoInterface.getpoint(
         ::GeoInterface.AbstractLineStringTrait,
         geom::AbstractGeometry,
         i::Integer,
     )
-        p = getpoint(geom, i - 1)
         if is3d(geom)
             return (p[1], p[2], p[3])
         else
             return (p[1], p[2])
         end
     end
+    # Preallocate `Ref`s to reduce allocations.
     function GeoInterface.getpoint(
         ::GeoInterface.AbstractLineStringTrait,
         geom::AbstractGeometry,
