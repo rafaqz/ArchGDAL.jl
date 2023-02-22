@@ -131,6 +131,29 @@ let pointtypes = (wkbPoint, wkbPoint25D, wkbPointM, wkbPointZM),
     )
         return getgeom(geom, i - 1)
     end
+    function GeoInterface.getpoint(
+        ::GeoInterface.AbstractLineStringTrait,
+        geom::AbstractGeometry,
+        i::Integer,
+    )
+        p = getpoint(geom, i - 1)
+        if is3d(geom)
+            return (p[1], p[2], p[3])
+        else
+            return (p[1], p[2])
+        end
+    end
+    function GeoInterface.getpoint(
+        ::GeoInterface.AbstractLineStringTrait,
+        geom::AbstractGeometry,
+    )
+        refs = Ref{Float64}(), Ref{Float64}(), Ref{Float64}()
+        if is3d(geom)
+            return ((p = getpoint!(geom, i - 1, refs...); (p[1], p[2], p[3])) for i in 1:GeoInterface.npoint(geom))
+        else
+            return ((p = getpoint!(geom, i - 1, refs...); (p[1], p[2])) for i in 1:GeoInterface.npoint(geom))
+        end
+    end
 
     # Operations
     function GeoInterface.intersects(
