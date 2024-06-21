@@ -1779,6 +1779,10 @@ for f in (:create, :unsafe_create)
     f1 = Symbol("$(f)point")
     @eval $f1(cs::Real...) = $f1(cs)
     @eval $f1(coords::Vector) = $f1(Tuple(coords))
+    @eval function $f1(coords::Tuple{})
+        geom = $f1(Val{wkbPoint}())
+        return geom
+    end
     @eval function $f1(coords::Tuple{<:Real,<:Real})
         geom = $f1(Val{wkbPoint}())
         addpoint!(geom, coords...)
